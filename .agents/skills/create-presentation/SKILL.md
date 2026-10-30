@@ -6,6 +6,7 @@ description: >-
   create a presentation, write slides in Markdown, convert notes/documents into a slide deck,
   design proposal or reporting slides, or format presentation content with multi-columns,
   KPIs, badges, and speaker notes.
+license: MIT
 ---
 
 # Create Presentation Skill

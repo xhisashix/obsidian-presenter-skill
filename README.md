@@ -33,49 +33,65 @@ Google Antigravity や Claude Code などのエージェントツールと連携
 ## ディレクトリ構成
 
 ```text
-.agents/
-└── skills/
-    └── create-presentation/
-        ├── SKILL.md                  # スキルメイン定義（ワークフロー・推敲・手順）
-        ├── references/
-        │   ├── syntax-guide.md       # Presenter記法完全リファレンス
-        │   └── design-patterns.md    # 定番デザインパターン集（比較、ステップ、KPI等）
-        └── resources/
-            └── templates/
-                ├── business-proposal.md  # 企画・提案書テンプレート
-                ├── tech-talk.md          # 技術勉強会・LTテンプレート
-                └── project-report.md     # プロジェクト進捗・定例報告テンプレート
+skills/
+└── create-presentation/
+    ├── SKILL.md                  # スキルメイン定義（ワークフロー・推敲・手順）
+    ├── references/
+    │   ├── syntax-guide.md       # Presenter記法完全リファレンス
+    │   └── design-patterns.md    # 定番デザインパターン集（比較、ステップ、KPI等）
+    └── resources/
+        └── templates/
+            ├── business-proposal.md  # 企画・提案書テンプレート
+            ├── tech-talk.md          # 技術勉強会・LTテンプレート
+            └── project-report.md     # プロジェクト進捗・定例報告テンプレート
 ```
 
 ---
 
 ## インストール方法 (Installation)
 
-### 方法 1: 特定の Obsidian Vault で使う場合（推奨）
+### 方法 1: GitHub CLI (`gh skill`) でインストールする場合（推奨）
 
-お使いの Obsidian Vault のルートディレクトリで、本リポジトリの `.agents` フォルダを配置します。
+GitHub CLI (`gh` v2.90.0 以降) を使用して、1コマンドで直接インストールできます。
+
+```bash
+# Obsidian Vault のルートディレクトリへ移動
+cd /path/to/your-obsidian-vault
+
+# 現在のプロジェクト（.agents/skills）にインストール
+gh skill install xhisashix/obsidian-presenter-skill
+
+# 特定のエージェント（Claude Code 等）を指定する場合
+gh skill install xhisashix/obsidian-presenter-skill --agent claude-code
+
+# マシン全体（グローバル）で使えるようにインストールする場合
+gh skill install xhisashix/obsidian-presenter-skill --scope user
+```
+
+### 方法 2: 手動で配置する場合
+
+#### A. 特定の Obsidian Vault で使う場合
+
+お使いの Obsidian Vault のルートディレクトリで、リポジトリのスキルフォルダを配置します。
 
 ```bash
 cd /path/to/your-obsidian-vault
 
-# 方法A: git clone して必要なスキルをコピー
+# git clone して必要なスキルをコピー
 git clone https://github.com/xhisashix/obsidian-presenter-skill.git /tmp/presenter-skill
 mkdir -p .agents/skills
-cp -R /tmp/presenter-skill/.agents/skills/create-presentation .agents/skills/
+cp -R /tmp/presenter-skill/skills/create-presentation .agents/skills/
 rm -rf /tmp/presenter-skill
-
-# 方法B: Git Submodule として直接管理する場合
-git submodule add https://github.com/xhisashix/obsidian-presenter-skill.git .agents/skills/create-presentation
 ```
 
-### 方法 2: マシン全体（グローバル）で使う場合 (Antigravity)
+#### B. マシン全体（グローバル）で使う場合 (Antigravity)
 
 すべてのワークスペースで利用可能にする場合は、グローバル設定ディレクトリに配置します。
 
 ```bash
 mkdir -p ~/.gemini/config/skills
 git clone https://github.com/xhisashix/obsidian-presenter-skill.git /tmp/presenter-skill
-cp -R /tmp/presenter-skill/.agents/skills/create-presentation ~/.gemini/config/skills/
+cp -R /tmp/presenter-skill/skills/create-presentation ~/.gemini/config/skills/
 rm -rf /tmp/presenter-skill
 ```
 
