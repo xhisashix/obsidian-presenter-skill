@@ -1,6 +1,6 @@
 # Obsidian Presenter 構文・記法リファレンス (Syntax Guide)
 
-Obsidian Presenter（v1.6+）でスライドを作成する際に利用可能な記法、HTMLコメントディレクティブ、フロントマター、およびエクスポート仕様の完全リファレンスです。
+Obsidian Presenter（v1.6.1+）でスライドを作成する際に利用可能な記法、HTMLコメントディレクティブ、フロントマター、およびエクスポート仕様の完全リファレンスです。
 
 ---
 
@@ -59,12 +59,13 @@ fit: auto
 | `mainColor` (`color`) | string (HEX/RGB) | `"#1e293b"` | 本文および見出しの基本文字色（メインカラー） |
 | `logo` | string | `""` | Vault内の画像パス (`attachments/logo.png`) または外部URL |
 | `aspectRatio` | `"16:9"` \| `"4:3"` | `"16:9"` | スライドのアスペクト比 |
+| `theme` | string | `""` | プリセットまたはカスタムテーマ名 |
 | `columnStyle` | `"card"` \| `"plain"` | `"card"` | カラムレイアウトのデフォルトスタイル |
-| `fit` (`presenter-fit`) | `"auto"` \| `"none"` \| bool | `true` (設定値) | はみ出したスライドを最大70%（`0.70`）まで自動縮小フィットするか |
-| `smartLayouts` (`smart-layouts`) | boolean | `true` | 中扉・引用・KPIビッグナンバーの自動推論を有効にするか |
-| `inheritHeadings` (`inherit-headings`) | boolean | `true` | `---` 分割スライドに親H2見出しを自動継承・連番付与（`1-1, 1-2`）するか |
-| `continuationPrefix` | string | `"[続き] "` | 見出し継承時のプレフィックス設定 |
-| `continuationSuffix` | string | `""` | 見出し継承時のサフィックス設定 |
+| `fit` (`presenter-fit`) | `"auto"` \| `"none"` \| bool | `false` (設定値) | はみ出したスライドを最大70%（`0.70`）まで自動縮小フィットするか |
+| `smartLayouts` (`smart-layouts`, `smartSlideLayouts`) | boolean | `true` | 中扉・引用・KPIビッグナンバーの自動推論を有効にするか |
+| `inheritHeadings` (`inherit-headings`, `inheritSlideHeadings`) | boolean | `true` | `---` 分割スライドに親H2見出しを自動継承・連番付与（`1-1, 1-2`）するか |
+| `continuationPrefix` (`continuation-prefix`, `headingContinuationPrefix`) | string | `"[続き] "` | 見出し継承時のプレフィックス設定 |
+| `continuationSuffix` (`continuation-suffix`, `headingContinuationSuffix`) | string | `""` | 見出し継承時のサフィックス設定 |
 
 ---
 
@@ -113,7 +114,7 @@ fit: auto
 
 `<!-- columns ... -->` のバリアント指定や専用コメントにより、コンサルティング資料で頻出する構造図やチャートを標準Markdownのまま描画できます。
 
-### 1. ステップフロー (`step`)
+### 1. ステップフロー (`step` / `steps`)
 各カラム上部に `STEP 01`, `STEP 02`... のバッジと、カラム間の `➔` 矢印コネクタを自動生成します。
 ```markdown
 <!-- columns 3 step -->
@@ -217,7 +218,7 @@ fit: auto
 ```
 
 ### 6. 水平バーチャート (`<!-- chart --> ... <!-- /chart -->`)
-`- ラベル | 数値テキスト | パーセンテージ%` の箇条書きを水平棒グラフに変換します。太字（`**`）、強調バッジ（`[牽引]`, `[重点]`, `[重要]`, `[強調]`, `[ボトルネック]`, `[目標]`）、または `🎯` を含む行のみがアクセントカラーで塗られ、それ以外はニュートラルグレーになります。
+`- ラベル | 数値テキスト | パーセンテージ%` の箇条書きを水平棒グラフに変換します（パーセンテージは最小 `6%`〜最大 `100%` にクランプされます）。太字（`**`）、強調バッジ（`[牽引]`, `[重点]`, `[重要]`, `[強調]`, `[ボトルネック]`, `[目標]`）、または `🎯` を含む行のみがアクセントカラーで塗られ、それ以外はニュートラルグレーになります。
 ```markdown
 <!-- chart -->
 - 既存オンプレミス事業（12億円） | 前年比 +4.2% | 45%
@@ -231,6 +232,9 @@ fit: auto
 ## 5. スマートスライドレイアウト (Smart Layouts)
 
 `smartLayouts: true`（デフォルト有効）のとき、スライドの内容に応じて自動的にレイアウトが推論されます。また、HTMLコメントで明示的に指定・上書きすることも可能です。
+
+> [!NOTE]
+> `> [!note]` 等の発表者ノートは本文としてカウントされないため、中扉（`section`）や引用（`quote`）スライドに発表者ノートを併記しても自動推論は維持されます。
 
 | レイアウト種別 | 自動推論の条件 | 明示指定ディレクティブ（エイリアス） |
 | :--- | :--- | :--- |
@@ -266,6 +270,11 @@ Obsidian標準のCallout記法を使って、スライド上部（エグゼク�
 - `> [!important]` : 最重要結論、エグゼクティブサマリー、Key Takeaway
 - `> [!tip]` : 全体進行フロー、推奨事項、ヒント
 - `> [!warning]` : リスク、注意点、制約事項
+
+### 5. コードブロック・Mermaid図・画像
+- **コードブロック**: ```` ```ts ```` や `~~~` 内の見出し（`##`）や水平線（`---`）はスライド境界として誤認識されません。
+- **Mermaid図**: ```` ```mermaid ```` ブロックがそのまま描画され、プレゼン画面でのクリックによるLightboxフルスクリーン拡大および `.pptx` エクスポート時のラスタライズ埋め込みに対応しています。
+- **画像埋め込み**: Vault内リンク（`![[image.png]]`）や標準Markdown（`![alt](path)`）が使用でき、HTMLエクスポート時はインライン化、PPTX出力時は画像として埋め込まれます。
 
 ---
 
